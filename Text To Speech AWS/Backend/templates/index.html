@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Text to Speech</h1>
+    <form action="/" method="post">
+        <label for="input_text">Enter some text:</label>
+        <input type="text" id="input_text" name="input_text" required>
+
+        <label for="voice">Choose a language:</label>
+        <select id="voice" name="voice" required onchange="updateAccents()">
+            <option value="en">English</option>
+            <option value="fr">French</option>
+            <option value="zh-CN">Mandarin (China Mainland)</option>
+            <option value="zh-TW">Mandarin (Taiwan)</option>
+            <option value="pt">Portuguese</option>
+            <option value="es">Spanish</option>
+            <!-- Add more languages if needed -->
+        </select>
+
+        <label for="accent">Choose an accent:</label>
+        <select id="accent" name="accent" required>
+            <option value="">Default</option>
+            <!-- English Accents -->
+            <option value="com.au" data-lang="en">English (Australia)</option>
+            <option value="co.uk" data-lang="en">English (United Kingdom)</option>
+            <option value="us" data-lang="en">English (United States)</option>
+            <option value="ca" data-lang="en">English (Canada)</option>
+            <option value="co.in" data-lang="en">English (India)</option>
+            <option value="ie" data-lang="en">English (Ireland)</option>
+            <option value="co.za" data-lang="en">English (South Africa)</option>
+            <option value="com.ng" data-lang="en">English (Nigeria)</option>
+            <!-- French Accents -->
+            <option value="ca" data-lang="fr">French (Canada)</option>
+            <option value="fr" data-lang="fr">French (France)</option>
+            <!-- Mandarin Accents -->
+            <option value="any" data-lang="zh-CN">Mandarin (China Mainland)</option>
+            <option value="any" data-lang="zh-TW">Mandarin (Taiwan)</option>
+            <!-- Portuguese Accents -->
+            <option value="com.br" data-lang="pt">Portuguese (Brazil)</option>
+            <option value="pt" data-lang="pt">Portuguese (Portugal)</option>
+            <!-- Spanish Accents -->
+            <option value="com.mx" data-lang="es">Spanish (Mexico)</option>
+            <option value="es" data-lang="es">Spanish (Spain)</option>
+            <option value="us" data-lang="es">Spanish (United States)</option>
+        </select>
+
+        <input type="submit" value="Submit">
+    </form>
+    {% if processed_text %}
+        <div class="result">
+            <p>{{ processed_text }}</p>
+            <audio controls>
+                <source src="{{ url_for('main.download_file', filename=audio_file) }}?{{ random() }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    {% endif %}
+    <footer>
+        <p>Powered by Flask and gTTS</p>
+    </footer>
+
+    <script>
+        function updateAccents() {
+            const voice = document.getElementById('voice').value;
+            const accents = document.getElementById('accent').options;
+            for (let i = 0; i < accents.length; i++) {
+                accents[i].style.display = accents[i].getAttribute('data-lang') === voice || accents[i].value === '' ? '' : 'none';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateAccents);
+    </script>
+</body>
+</html>
